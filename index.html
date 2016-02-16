@@ -1,0 +1,31 @@
+
+<body>
+
+<script src="./node_modules/react/dist/react.js"></script>
+<script>
+	ReactDOM = React.__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED; // for dev, then it will be rendered on server rather
+</script>
+
+<!-- uncomment 1, 2 or 3 -->
+
+<!-- 1.  awal's requirejs -->
+<script src="node_modules/mini-requirejs/main.js"></script>
+<script>
+	// needs a 
+	require('./src/index.js');
+</script>
+
+<!-- 2. awal's bundle -->
+
+<!-- <script src="dest/bundle.js"></script> -->
+
+<!-- 3. browserify bundle -->
+
+<!-- <script src="dest/bundle2.js"></script> -->
+
+
+<link rel="stylesheet" type="text/css" href="style.css">
+
+</body>
+
+

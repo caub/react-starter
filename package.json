@@ -1,0 +1,26 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "crl",
+  "license": "ISC",
+  "scripts": {
+    "bundle": "node build src/index.js src dest/bundle.js",
+    "bundle2": "browserify src/index.js -o dest/bundle2.js",
+    "bundle3": "browserify index.js -o dist/bundle3.js -t [ babelify --presets [ es2015 react ] ]",
+    "min": "browserify dist/bundle3.js -d -p [minifyify --no-map] -o dist/bundle.min.js",
+    "ugly": "uglifyjs dist/bundle3.js --compress --screw-ie8 -o dist/bundle.min2.js"
+  },
+  "devDependencies": {
+    "mini-requirejs": "gist:cf82c451120373dc1568",
+    "requirify": "gist:51e4ec99dc8ef5951706"
+  },
+  "dependencies": {
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7"
+  }
+}
