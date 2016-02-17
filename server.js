@@ -43,19 +43,22 @@ app.get('/dest/bundle.js', function(req, res){ // for tests with bundle mode, re
 app.get('/', function(req, res){
 	// set header to html ? works without res.setHeader('Content-Type', 'text/html');
 	res.send(
-		body(ReactDOMServer.renderToString(v(App))) // put inside ReactDOMServer.renderToString(v(App)) for server-side pre-rendering
-		// should also put a script with window.__state__ = initial state, (todo)
+		body(
+			ReactDOMServer.renderToString(v(App)),
+			{foo: {x:1, y:2}, bar:'ok'}
+		)
 	);
 });
 
 // uncomment either requirejs mode mini-requirejs + require('./src/index.js') or bundle mode below
-var body = (renderedByServer='') => `<body> hell world <b>test</b>
+var body = (renderedByServer='', initialData={}) => `<body> hell world <b>test</b>
 <div id="app">${renderedByServer}</div>
 <script src="./node_modules/react/dist/react.js"></script>
 <script src="./node_modules/react-dom/dist/react-dom.js"></script>
 
 <script src="node_modules/mini-requirejs/main.js"></script>
 <script>
+  window.__data__ = ${JSON.stringify(initialData)};
 	require('./src/index.js');
 </script>
 <!-- <script src="/dest/bundle.js"></script> -->
