@@ -1,5 +1,5 @@
 var React = require('react');
-var v = require('../vdom.js');
+var v = require('../vdom.js').bind(React);
 var Foo = require('./Foo.js');
 var Bar = require('./Bar.js');
 
