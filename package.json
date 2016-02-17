@@ -10,6 +10,7 @@
   "license": "ISC",
   "scripts": {
     "bundle": "node build src/index.js src dest/bundle.js",
+    "server": "node --use_strict --es_staging --harmony_destructuring --harmony_default_parameters --harmony_rest_parameters server",
     "bundle2": "browserify src/index.js -o dest/bundle2.js",
     "bundle3": "browserify index.js -o dist/bundle3.js -t [ babelify --presets [ es2015 react ] ]",
     "min": "browserify dist/bundle3.js -d -p [minifyify --no-map] -o dist/bundle.min.js",

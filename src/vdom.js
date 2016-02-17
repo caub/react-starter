@@ -1,5 +1,5 @@
 
- // virtual dom helper, it works maybe with document too
+ // virtual dom helper, it could work probably with other objects than React that implements createElement(tag, props, ...children)
 function createElement(selector='', props, ...a){ 
 	if (typeof selector ==='function') return this.createElement(selector, props, ...a);
 	var [tag, ...cls] = selector.split('.');
@@ -14,11 +14,6 @@ function createElement(selector='', props, ...a){
 };
 
 module.exports = createElement;
-
-// var isProps = typeof window !== "undefined" ? // isomorphic util to check if an object is props or children
-// 				props => !(props instanceof Node)  : // not a dom node
-// 				props => !props.$$typeof; // not a react vdom object
-
 
 // var v = createElement.bind(React);
 // v('div', {id:'foo'}, h('span', 'hello'));

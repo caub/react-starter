@@ -1,68 +1,66 @@
-// node --use_strict --es_staging --harmony_destructuring --harmony_default_parameters --harmony_rest_parameters
+// run it with 
+//node --use_strict --es_staging --harmony_destructuring --harmony_default_parameters --harmony_rest_parameters server
+// or npm run server
 
 let express = require('express');
 let React = require('react');
 let ReactDOMServer = require('react-dom/server');
-// var createBundle = require('requirify');
+var createBundle = require('requirify');
 var v = require('./src/vdom.js').bind(React);
 var App = require('./src/components/App.js');
-// var listFilesRec = require('./listFilesRec');
+var listFilesRec = require('./listFilesRec');
 let app = express();
 
-// console.log(ReactDOMServer.renderToStaticMarkup(v(App)));
-// console.log(ReactDOMServer.renderToString(v(App)));
-app.use(express.static('public'));
-app.use('/node_modules', express.static('node_modules'));
-app.use('/src', express.static('src'));
 
-// var modules = listFilesRec('src', []).map(m=>'./'+m); // take all modules in dir
+app.use(function(req, res, next) { 
+  res.setHeader('Access-Control-Allow-Origin', '*');// just experiments, ignore it
+  return next();
+});
+app.use(express.static('public')); // serves public
+app.use('/node_modules', express.static('node_modules')); // node_modules
+
+app.use('/src', express.static('src')); // and src for tests with requirejs mode
+
+app.get('/dest/bundle.js', function(req, res){ // for tests with bundle mode, recompiled on the fly
+	var modules = listFilesRec('src', []).map(m=>'./'+m); // take all modules in src
+	var code = `(function () {
+	  var require = ${createBundle(modules, {
+	        entry: './src/index.js',
+	        map: {
+						react: 'React',
+						'react-dom': 'ReactDOM'
+					}
+	    })};
+	 })()`;
+	 console.log('bundled', new Date());
+	 // set header to js? not needed starngely res.setHeader('Content-Type', 'application/javascript');
+	 res.send(code);
+})
+
+//app.use('/dest', express.static('dest')); // you could also do that and recompile bundle when changing files, with a watcher
+
 
 app.get('/', function(req, res){
+	// set header to html ? works without res.setHeader('Content-Type', 'text/html');
 	res.send(
-		ReactDOMServer.renderToStaticMarkup(
-			v('body', 
-				v('div', {id:'app', dangerouslySetInnerHTML: {__html:ReactDOMServer.renderToString(v(App))}} ),
-	      'ok ..',
-	      v('script', {src:'./node_modules/react/dist/react.js'}),
-	      v('script', {src:'./node_modules/react-dom/dist/react-dom.js'}),
-	      v('link', {rel:"stylesheet", type:"text/css", href:"style.css"})
-			)
-		)
+		body(ReactDOMServer.renderToString(v(App))) // put inside ReactDOMServer.renderToString(v(App)) for server-side pre-rendering
+		// should also put a script with window.__state__ = initial state, (todo)
 	);
 });
 
-
-var body = `<body>
-<div id="app"></div>
-
-
+// uncomment either requirejs mode mini-requirejs + require('./src/index.js') or bundle mode below
+var body = (renderedByServer='') => `<body> hell world <b>test</b>
+<div id="app">${renderedByServer}</div>
 <script src="./node_modules/react/dist/react.js"></script>
 <script src="./node_modules/react-dom/dist/react-dom.js"></script>
 
-<!-- uncomment 1, 2 or 3 -->
-
-<!-- 1.  awal's requirejs -->
 <script src="node_modules/mini-requirejs/main.js"></script>
-<!-- <script src = "./src/index.js"></script> -->
-
 <script>
 	require('./src/index.js');
 </script>
-
-<!-- 2. awal's bundle -->
-
-<!-- <script src="dest/bundle.js"></script> -->
-
-<!-- 3. browserify bundle -->
-
-<!-- <script src="dest/bundle2.js"></script> -->
-
-
+<!-- <script src="/dest/bundle.js"></script> -->
 <link rel="stylesheet" type="text/css" href="style.css">
-
 </body>`;
 
-
-var setHtml = html=> ({dangerouslySetInnerHTML: {__html:html}});
 
 app.listen(3000, function () {console.log('server listening on', this.address().port);});
