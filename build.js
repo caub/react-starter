@@ -30,6 +30,6 @@ var code = `(function () {
 
 //if (runBabel) code = babel.transform(code, {presets:['es2015']}).code;
 
-fs.writeFile(dest, createBundle(dir, entry), function() {
+fs.writeFile(dest, code, function() {
     console.log('Build finished');
 });

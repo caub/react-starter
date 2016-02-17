@@ -32,7 +32,7 @@ app.get('/dest/bundle.js', function(req, res){ // for tests with bundle mode, re
 					}
 	    })};
 	 })()`;
-	 console.log('bundled', new Date());
+	 console.log('re-bundled at', new Date());
 	 // set header to js? not needed starngely res.setHeader('Content-Type', 'application/javascript');
 	 res.send(code);
 })
@@ -44,25 +44,25 @@ app.get('/', function(req, res){
 	// set header to html ? works without res.setHeader('Content-Type', 'text/html');
 	res.send(
 		body(
-			ReactDOMServer.renderToString(v(App)),
-			{foo: {x:1, y:2}, bar:'ok'}
+			{foo: {x:1, y:2}, bar:'ofk'} // some data fetched from DB in general
 		)
 	);
 });
 
-// uncomment either requirejs mode mini-requirejs + require('./src/index.js') or bundle mode below
-var body = (renderedByServer='', initialData={}) => `<body> hell world <b>test</b>
-<div id="app">${renderedByServer}</div>
-<script src="./node_modules/react/dist/react.js"></script>
-<script src="./node_modules/react-dom/dist/react-dom.js"></script>
+// uncomment either requirejs mode mini-requirejs + require('./src/index.js') or /dest/bundle.js mode below
+var body = initialData => `
+<body> hell world <b>test</b>
+	<div id="app">${ReactDOMServer.renderToString(v(App, {data:initialData}))}</div>
+	<script src="./node_modules/react/dist/react.js"></script>
+	<script src="./node_modules/react-dom/dist/react-dom.js"></script>
 
-<script src="node_modules/mini-requirejs/main.js"></script>
-<script>
-  window.__data__ = ${JSON.stringify(initialData)};
-	require('./src/index.js');
-</script>
-<!-- <script src="/dest/bundle.js"></script> -->
-<link rel="stylesheet" type="text/css" href="style.css">
+	<script src="node_modules/mini-requirejs/main.js"></script>
+	<script>
+	  window.APP_DATA = ${JSON.stringify(initialData)};
+		require('./src/index.js');
+	</script>
+	<!-- <script src="/dest/bundle.js"></script> -->
+	<link rel="stylesheet" type="text/css" href="style.css">
 </body>`;
 
 

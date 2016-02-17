@@ -1,15 +1,13 @@
 (function () {
-    var require = /*! bundle compiled on Tue Feb 16 2016 22:39:36 GMT+0100 (Paris, Madrid) */
+  var require = /*! bundle compiled on Wed Feb 17 2016 23:54:54 GMT+0100 (Paris, Madrid) */
 (function () {
 	var require = window.require = (function () {
 		var ROOT = '/';
 		var REQUIRE_CACHE = Object.create(null);
 		var REQUIRE_SOURCE = Object.create(null);
+		var REQUIRE_MAP = Object.create(null);
 		var RE_URL = /^\w+:\/\/.+/;
-		var REQUIRE_MAP = { // could use opts.map
-			react: 'React',
-			'react-dom': 'ReactDOM'
-		};
+		
 		function require(url) {
 			if (!url.startsWith('.')&&!url.startsWith('/')) return window[REQUIRE_MAP[url]];
 			var abs = _GenerateFQN_(url, this.__dirname);
@@ -52,14 +50,19 @@ require.bind(MODULE__module));
 	})();
 	require.register("./src/components/App.js", function (module, exports, __dirname, require) {
 		var React = require('react');
-var v = require('/src/vdom.js').bind(React);
+var v = require('../vdom.js').bind(React);
 var Foo = require('./Foo.js');
 var Bar = require('./Bar.js');
 
 module.exports = React.createClass({
+	getInitialState(){ return {data: this.props.data} }, // some state pre-computed on server usually
+	getDefaultProps(){ return {data:{foo:{}}}},
 	render(){
-		return v('div.app', 
-			'hello world', 
+		var data = this.state.data; // let's say it's for storing click position
+		return v('div.app', {
+			onClick:e=>this.setState({data:Object.assign({},data,{foo:{x:e.clientX,y:e.clientY}})})
+			},
+			'hello world ', `you clicked there: ${data.foo.x}, ${data.foo.y}`,
 			v('div', 
 				v(Foo),
 				v('pre', v(Bar))
@@ -70,7 +73,7 @@ module.exports = React.createClass({
 	});
 	require.register("./src/components/Bar.js", function (module, exports, __dirname, require) {
 		var React = require('react');
-var v = require('/src/vdom.js').bind(React);
+var v = require('../vdom.js').bind(React);
 
 module.exports = React.createClass({
 	getInitialState(){return {s:false}},
@@ -86,7 +89,7 @@ module.exports = React.createClass({
 	});
 	require.register("./src/components/Foo.js", function (module, exports, __dirname, require) {
 		var React = require('react');
-var v = require('/src/vdom.js').bind(React);
+var v = require('../vdom.js').bind(React);
 var Widget = require('./things/Widget.js');
 
 module.exports = React.createClass({
@@ -103,7 +106,7 @@ module.exports = React.createClass({
 	});
 	require.register("./src/components/things/Widget.js", function (module, exports, __dirname, require) {
 		var React = require('react');
-var v = require('/src/vdom.js').bind(React);
+var v = require('../../vdom.js').bind(React);
 
 module.exports = React.createClass({
 	getInitialState(){return {clicks:0}},
@@ -128,21 +131,21 @@ module.exports = React.createClass({
 	require.register("./src/index.js", function (module, exports, __dirname, require) {
 		
 // mostly for dev, later on we will render this from server
+var React = require('react');
 var v = require('./vdom.js').bind(React);
 var reactDOM = require('react-dom');
 var App = require('./components/App.js');
 
-var mountPoint = document.body.insertBefore(document.createElement('div'), document.body.firstChild);
-ReactDOM.render(v(App), mountPoint);
+ReactDOM.render(v(App, {data:window.APP_DATA}), document.getElementById('app'));
 
 	});
 	require.register("./src/vdom.js", function (module, exports, __dirname, require) {
 		
- // virtual dom helper, it works maybe with document too
-module.exports = function(selector='', props, ...a){ 
+ // virtual dom helper, it could work probably with other objects than React that implements createElement(tag, props, ...children)
+function createElement(selector='', props, ...a){ 
 	if (typeof selector ==='function') return this.createElement(selector, props, ...a);
-	let [tag, ...cls] = selector.split('.');
-	if (props && typeof props==='object' && !props.$$typeof) { 
+	var [tag, ...cls] = selector.split('.');
+	if (typeof props==='object' && !props.$$typeof) { 
 		// special properties for dynamic classes are active and selected
 		if (props.active) cls.push('active');
 		if (props.selected) cls.push('selected');
@@ -152,10 +155,19 @@ module.exports = function(selector='', props, ...a){
 	return this.createElement(tag||'div', {className:cls.length?cls.join(' '):null}, props, ...a);// props is a child
 };
 
+module.exports = createElement;
+
+// var v = createElement.bind(React);
+// v('div', {id:'foo'}, h('span', 'hello'));
+
+
+
+
 	});
-		
+		require.map('react', 'React');
+require.map('react-dom', 'ReactDOM');
 	require('./src/index.js');
 
 })();
 ;
-; })()
+ })()

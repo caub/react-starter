@@ -1,4 +1,4 @@
 .foo {background-color: #eef;}
-.bar {background-color: #fef;}
+.bar {background-color: #fef; height: 3em;}
 .widget {background-color: #ffe;}
 .app {background-color: #eee;}

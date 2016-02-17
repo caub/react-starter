@@ -4,15 +4,15 @@ var Foo = require('./Foo.js');
 var Bar = require('./Bar.js');
 
 module.exports = React.createClass({
-	getInitialState(){ return {data: typeof window!=='undefined'?window.__data__:{foo:{}}} }, // some state pre-computed on server usually
-	//getDefaultProps(){ return {data:{foo:{}}}},
+	getInitialState(){ return {data: this.props.data} }, // some state pre-computed on server usually
+	getDefaultProps(){ return {data:{foo:{}}}},
 	render(){
 		var data = this.state.data; // let's say it's for storing click position
 		return v('div.app', {
 			onClick:e=>this.setState({data:Object.assign({},data,{foo:{x:e.clientX,y:e.clientY}})})
 			},
 			'hello world ', `you clicked there: ${data.foo.x}, ${data.foo.y}`,
-			v('div', 
+			v('div', 'some random comps for demo',
 				v(Foo),
 				v('pre', v(Bar))
 			)
