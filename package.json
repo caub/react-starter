@@ -4,11 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "crl",
-  "license": "ISC",
-  "scripts": {
     "bundle": "node build src src/index.js dest/bundle.js",
     "server": "node --use_strict --es_staging --harmony_destructuring --harmony_default_parameters --harmony_rest_parameters server",
     "bundle2": "browserify src/index.js -o dest/bundle2.js",
@@ -16,11 +11,15 @@
     "min": "browserify dist/bundle3.js -d -p [minifyify --no-map] -o dist/bundle.min.js",
     "ugly": "uglifyjs dist/bundle3.js --compress --screw-ie8 -o dist/bundle.min2.js"
   },
+  "author": "ipaoo",
+  "license": "ISC",
   "devDependencies": {
     "mini-requirejs": "gist:cf82c451120373dc1568",
     "requirify": "gist:51e4ec99dc8ef5951706"
   },
   "dependencies": {
+    "babel-core": "^6.6.5",
+    "babel-preset-react": "^6.5.0",
     "react": "^0.14.7",
     "react-dom": "^0.14.7"
   }

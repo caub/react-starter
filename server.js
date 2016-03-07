@@ -5,10 +5,10 @@
 let express = require('express');
 let React = require('react');
 let ReactDOMServer = require('react-dom/server');
-var createBundle = require('requirify');
-var v = require('./src/vdom.js').bind(React);
-var App = require('./src/components/App.js');
-var listFilesRec = require('./listFilesRec');
+let createBundle = require('requirify');
+let v = require('./src/vdom.js').bind(React);
+//let App = require('./src/components/App.js');
+let buildModules = require('./buildModules.js');
 let app = express();
 
 
@@ -21,23 +21,13 @@ app.use('/node_modules', express.static('node_modules')); // node_modules
 
 app.use('/src', express.static('src')); // and src for tests with requirejs mode
 
-app.get('/dest/bundle.js', function(req, res){ // for tests with bundle mode, recompiled on the fly
-	var modules = listFilesRec('src', []).map(m=>'./'+m); // take all modules in src
-	var code = `(function () {
-	  var require = ${createBundle(modules, {
-	        entry: './src/index.js',
-	        map: {
-						react: 'React',
-						'react-dom': 'ReactDOM'
-					}
-	    })};
-	 })()`;
-	 console.log('re-bundled at', new Date());
-	 // set header to js? not needed starngely res.setHeader('Content-Type', 'application/javascript');
-	 res.send(code);
+app.get('/dist/bundle.js', function(req, res){ // for tests with bundle mode, recompiled on the fly
+	let code = buildModules();
+	console.log('re-bundled at', new Date());
+	// set header to js? not needed strangely res.setHeader('Content-Type', 'application/javascript');
+	res.send(code);
 })
-
-//app.use('/dest', express.static('dest')); // you could also do that and recompile bundle when changing files, with a watcher
+//app.use('/dest', express.static('dist')); // or you could also do that and recompile bundle when changing files, with a watcher
 
 
 app.get('/', function(req, res){
@@ -50,20 +40,23 @@ app.get('/', function(req, res){
 });
 
 // uncomment either requirejs mode mini-requirejs + require('./src/index.js') or /dest/bundle.js mode below
+// not rendering on server with jsx.. (in dev)  ${ReactDOMServer.renderToString(v(App, {data:initialData}))}
 var body = initialData => `
-<body> hell world <b>test</b>
-	<div id="app">${ReactDOMServer.renderToString(v(App, {data:initialData}))}</div>
+	<link rel="stylesheet" type="text/css" href="style.css">
+
+	hell world <b>test</b>
+	<div id="app"></div>
 	<script src="./node_modules/react/dist/react.js"></script>
 	<script src="./node_modules/react-dom/dist/react-dom.js"></script>
 
-	<script src="node_modules/mini-requirejs/main.js"></script>
+	<!-- <script src="node_modules/mini-requirejs/main.js"></script> -->
 	<script>
 	  window.APP_DATA = ${JSON.stringify(initialData)};
-		require('./src/index.js');
+		//require('./src/index.js');
 	</script>
-	<!-- <script src="/dest/bundle.js"></script> -->
-	<link rel="stylesheet" type="text/css" href="style.css">
-</body>`;
+	<script src="/dist/bundle.js"></script>
+`;
 
+// could use React.renderToStaticMarkup
 
-app.listen(3000, function () {console.log('server listening on', this.address().port);});
+app.listen(3000, function(){console.log('server listening on', this.address().port)});

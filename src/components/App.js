@@ -5,7 +5,7 @@ var Bar = require('./Bar.js');
 
 module.exports = React.createClass({
 	getInitialState(){ return {data: this.props.data} }, // some state pre-computed on server usually
-	getDefaultProps(){ return {data:{foo:{}}}},
+	getDefaultProps(){ return {data: typeof window!=='undefined' && window.APP_DATA || {foo:{}}}},
 	render(){
 		var data = this.state.data; // let's say it's for storing click position
 		return v('div.app', {

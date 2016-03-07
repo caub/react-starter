@@ -1,9 +1,9 @@
 
- // virtual dom helper, it could work probably with other objects than React that implements createElement(tag, props, ...children)
+ // virtual dom helper
 function createElement(selector='', props, ...a){ 
 	if (typeof selector ==='function') return this.createElement(selector, props, ...a);
 	var [tag, ...cls] = selector.split('.');
-	if (typeof props==='object' && !props.$$typeof) { 
+	if (typeof props==='object' && !Array.isArray(props) && !props.$$typeof) { 
 		// special properties for dynamic classes are active and selected
 		if (props.active) cls.push('active');
 		if (props.selected) cls.push('selected');
@@ -16,7 +16,7 @@ function createElement(selector='', props, ...a){
 module.exports = createElement;
 
 // var v = createElement.bind(React);
-// v('div', {id:'foo'}, h('span', 'hello'));
+// v('div', {id:'foo'}, h('span', 'hello')); 
 
 
 

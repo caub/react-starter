@@ -2,3 +2,5 @@
 .bar {background-color: #fef; height: 3em;}
 .widget {background-color: #ffe;}
 .app {background-color: #eee;}
+
+.selected {outline: 1px solid blue;}
