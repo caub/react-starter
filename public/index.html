@@ -1,0 +1,33 @@
+
+
+<link rel="stylesheet" type="text/css" href="style.css">
+hello!
+<div id="app"></div>
+
+
+<script src="./node_modules/react/dist/react.js"></script>
+<script src="./node_modules/react-dom/dist/react-dom.js"></script>
+
+<script>
+	window.APP_DATA = {foo: {x:1, y:2}, bar:'ok'};
+</script>
+
+<!-- uncomment 1, 2 or 3 -->
+
+<!-- 1.  awal's requirejs -->
+<script src="./node_modules/mini-requirejs/main.js"></script>
+
+<script>
+	require('./src/index.js');
+</script>
+
+<!-- 2. awal's bundle -->
+
+<!-- <script src="../dist/bundle.js"></script> -->
+
+<!-- 3. browserify bundle -->
+
+<!-- <script src="dist/bundle2.js"></script> -->
+
+
+

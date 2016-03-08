@@ -1,11 +1,12 @@
 var React = require('react');
 var v = require('../vdom.js').bind(React);
 var Foo = require('./Foo.js');
-var Bar = require('./Bar.js');
+var Bar = require('./Bar.jsx');
 
 module.exports = React.createClass({
 	getInitialState(){ return {data: this.props.data} }, // some state pre-computed on server usually
-	getDefaultProps(){ return {data: typeof window!=='undefined' && window.APP_DATA || {foo:{}}}},
+	getDefaultProps(){ return {data: typeof window!=='undefined' && window.APP_DATA}},
+
 	render(){
 		var data = this.state.data; // let's say it's for storing click position
 		return v('div.app', {
